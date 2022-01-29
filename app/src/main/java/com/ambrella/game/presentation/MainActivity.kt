@@ -1,7 +1,8 @@
-package com.ambrella.game
+package com.ambrella.game.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.ambrella.game.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
