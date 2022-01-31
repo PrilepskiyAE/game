@@ -1,22 +1,64 @@
 package com.ambrella.game.presentation
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import com.ambrella.game.R
+import com.ambrella.game.databinding.FragmentChooseLevelBinding
+import com.ambrella.game.domain.entity.Level
+import java.util.jar.Attributes
 
 
 class ChooseLevelFragment : Fragment() {
+    private var _binding: FragmentChooseLevelBinding? = null
+    private val binding: FragmentChooseLevelBinding
+        get() = _binding ?: throw RuntimeException("ChooseLevelFragment==null")
 
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_choose_level, container, false)
+        _binding = FragmentChooseLevelBinding.inflate(layoutInflater, container, false)
+        return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.buttonLevelTest.setOnClickListener {
+            launchGameFragment(Level.TEST)
+        }
+        binding.buttonLevelEasy.setOnClickListener {
+            launchGameFragment(Level.EASY)
+        }
+        binding.buttonLevelNormal.setOnClickListener {
+            launchGameFragment(Level.NORMAL)
+        }
+        binding.buttonLevelHard.setOnClickListener {
+            launchGameFragment(Level.HARD)
+        }
+    }
+
+
+    private fun launchGameFragment(level: Level) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, GameFragment.newInstance(level))
+            .addToBackStack(GameFragment.NAME)
+            .commit()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
+    companion object {
+        const val NAME="ChooseLevelFragment"
+        fun newInstance(): ChooseLevelFragment {
+            return ChooseLevelFragment()
+        }
+    }
 }
