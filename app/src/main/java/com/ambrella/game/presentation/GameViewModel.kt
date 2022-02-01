@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.ambrella.game.R
 import com.ambrella.game.data.GameRepositoryImpl
 import com.ambrella.game.domain.entity.GameResult
@@ -13,14 +14,13 @@ import com.ambrella.game.domain.entity.Level
 import com.ambrella.game.domain.entity.Question
 import com.ambrella.game.domain.usecases.GenerateQuestionUseCase
 import com.ambrella.game.domain.usecases.GetGameSettingsUseCase
+class GameViewModel(
+    private val application: Application,
+    private val level: Level
+) : ViewModel() {
 
-class GameViewModel(application: Application):AndroidViewModel(application) {
     private lateinit var gameSettings: GameSettings
-    private lateinit var level: Level
 
-
-
-    private val context = application
     private val repository = GameRepositoryImpl
 
     private val generateQuestionUseCase = GenerateQuestionUseCase(repository)
@@ -63,8 +63,12 @@ class GameViewModel(application: Application):AndroidViewModel(application) {
     private var countOfRightAnswers = 0
     private var countOfQuestions = 0
 
-    fun startGame(level: Level) {
-        getGameSettings(level)
+    init {
+        startGame()
+    }
+
+    private fun startGame() {
+        getGameSettings()
         startTimer()
         generateQuestion()
         updateProgress()
@@ -80,7 +84,7 @@ class GameViewModel(application: Application):AndroidViewModel(application) {
         val percent = calculatePercentOfRightAnswers()
         _percentOfRightAnswers.value = percent
         _progressAnswers.value = String.format(
-            context.resources.getString(R.string.progress_answers),
+            application.resources.getString(R.string.progress_answers),
             countOfRightAnswers,
             gameSettings.minCountOfRightAnswers
         )
@@ -89,7 +93,9 @@ class GameViewModel(application: Application):AndroidViewModel(application) {
     }
 
     private fun calculatePercentOfRightAnswers(): Int {
-        if (countOfQuestions == 0){return 0}
+        if (countOfQuestions == 0) {
+            return 0
+        }
         return ((countOfRightAnswers / countOfQuestions.toDouble()) * 100).toInt()
     }
 
@@ -101,8 +107,7 @@ class GameViewModel(application: Application):AndroidViewModel(application) {
         countOfQuestions++
     }
 
-    private fun getGameSettings(level: Level) {
-        this.level = level
+    private fun getGameSettings() {
         this.gameSettings = getGameSettingsUseCase(level)
         _minPercent.value = gameSettings.minPercentOfRightAnswers
     }
