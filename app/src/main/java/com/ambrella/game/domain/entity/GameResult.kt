@@ -8,6 +8,6 @@ import java.io.Serializable
 data class GameResult(
     val winner:Boolean,
     val countOfRightAnswers:Int,
-    val countOfRightQuestion: Int,
+    val countOfQuestions: Int,
     val gameSettings: GameSettings
         ):Parcelable
